@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Page</title>
+    <link rel="stylesheet" type="text/css" href="/styles.css">
+</head>
+<body>
+    <header>
+        <div class="top-header">
+            <h1>My Website</h1>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/login">Login</a> | 
+                <a href="/signup">Sign Up</a>
+            </nav>
+        </div>
+        <div class="banner">
+            <h2>Login to Your Account</h2>
+        </div>
+    </header>
+    <div class="container">
+        <aside class="sidebar">
+            <h3>Sidebar</h3>
+            <ul>
+                <li><a href="/">Home</a></li>
+                
+                <li><a href="/signup">Sign Up</a></li>
+            </ul>
+        </aside>
+        <main>
+            <h1>Login</h1>
+            <form method="post" action="/login">
+                <label>Username: <input type="text" name="username"></label><br>
+                <label>Password: <input type="password" name="password"></label><br>
+                <button type="submit">Login</button>
+            </form>
+        </main>
+    </div>
+</body>
+</html>

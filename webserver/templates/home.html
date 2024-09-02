@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home Page</title>
+    <link rel="stylesheet" type="text/css" href="/styles.css">
+</head>
+<body>
+    <header>
+        <div class="top-header">
+            <h1>My Website</h1>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/login">Login</a> | 
+                <a href="/signup">Sign Up</a>
+            </nav>
+        </div>
+        <div class="banner">
+            <h2>Welcome to Products and Services</h2>
+        </div>
+    </header>
+    <div class="container">
+        <aside class="sidebar">
+            <h3>Sidebar</h3>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/products">Products</a></li>
+                <li><a href="/services">Services</a></li>
+            </ul>
+        </aside>
+        <main>
+            <h1>Products and Services</h1>
+            <ul>
+                {{range .}}
+                    <li>{{.Name}} - {{.Price}}</li>
+                {{end}}
+            </ul>
+        </main>
+    </div>
+</body>
+</html>

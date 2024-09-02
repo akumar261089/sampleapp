@@ -1,0 +1,97 @@
+/* styles.css */
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+header {
+    background: #007bff; /* Bright blue for header background */
+    color: #fff;
+    padding: 10px 0;
+}
+
+.top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    border-bottom: 3px solid #0056b3; /* Darker blue for a subtle border */
+}
+
+.top-header h1 {
+    margin: 0;
+    font-size: 1.5em;
+}
+
+.top-header nav a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 15px;
+    font-weight: bold;
+}
+
+.top-header nav a:hover {
+    text-decoration: underline;
+}
+
+.banner {
+    background: #0056b3; /* Darker blue for banner */
+    color: #fff;
+    padding: 15px 20px;
+    text-align: center;
+    font-size: 1.2em;
+}
+
+.container {
+    display: flex;
+    margin: 20px;
+}
+
+.sidebar {
+    width: 25%;
+    background: #ffffff; /* White background for the sidebar */
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+
+.sidebar h3 {
+    margin-top: 0;
+    color: #007bff;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 15px 0;
+}
+
+.sidebar ul li a {
+    text-decoration: none;
+    color: #0056b3; /* Darker blue for links */
+    font-weight: bold;
+}
+
+.sidebar ul li a:hover {
+    color: #007bff; /* Lighter blue on hover */
+}
+
+main {
+    width: 75%;
+    padding: 20px;
+    background: #fff; /* White background for the main content */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+
+h1, h2, h3 {
+    margin: 0;
+    color: #333;
+}

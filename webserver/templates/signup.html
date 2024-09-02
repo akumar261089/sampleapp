@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign Up Page</title>
+    <link rel="stylesheet" type="text/css" href="/styles.css">
+</head>
+<body>
+    <header>
+        <div class="top-header">
+            <h1>My Website</h1>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/login">Login</a> | 
+                <a href="/signup">Sign Up</a>
+            </nav>
+        </div>
+        <div class="banner">
+            <h2>Join Us Today</h2>
+        </div>
+    </header>
+    <div class="container">
+        <aside class="sidebar">
+            <h3>Sidebar</h3>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/login">Login</a></li>
+                <li><a href="/signup">Sign Up</a></li>
+            </ul>
+        </aside>
+        <main>
+            <h1>Sign Up</h1>
+            <form method="post" action="/signup">
+                <label>Username: <input type="text" name="username"></label><br>
+                <label>Email: <input type="email" name="email"></label><br>
+                <label>Password: <input type="password" name="password"></label><br>
+                <label>Age: <input type="age" name="age"></label><br>
+                <button type="submit">Sign Up</button>
+            </form>
+        </main>
+    </div>
+</body>
+</html>
