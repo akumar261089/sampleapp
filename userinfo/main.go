@@ -44,7 +44,7 @@ func UserDetailsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Load auth tokens
-	if err := loadAuthTokens("../userdata/authtokens.json"); err != nil {
+	if err := loadAuthTokens("/app/shared_data/authtokens.json"); err != nil {
 		http.Error(w, "Error loading auth tokens", http.StatusInternalServerError)
 		logger.Println("Error loading auth tokens:", err)
 		return
@@ -58,7 +58,7 @@ func UserDetailsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Load user details
-	userStore, err := loadUserStore("../userdata/users.json")
+	userStore, err := loadUserStore("/app/shared_data/users.json")
 	if err != nil {
 		http.Error(w, "Error loading user store", http.StatusInternalServerError)
 		logger.Println("Error loading user store:", err)
@@ -101,7 +101,7 @@ func UserAddHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Load user store
-	userStore, err := loadUserStore("../userdata/users.json")
+	userStore, err := loadUserStore("/app/shared_data/users.json")
 	if err != nil {
 		http.Error(w, "Error loading user store", http.StatusInternalServerError)
 		logger.Println("Error loading user store:", err)
@@ -118,7 +118,7 @@ func UserAddHandler(w http.ResponseWriter, r *http.Request) {
 	// Add new user
 	userStore[userDetails.Name] = userDetails
 
-	if err := saveUserStore("../userdata/users.json", userStore); err != nil {
+	if err := saveUserStore("/app/shared_data/users.json", userStore); err != nil {
 		http.Error(w, "Error saving user store", http.StatusInternalServerError)
 		logger.Println("Error saving user store:", err)
 		return
@@ -177,24 +177,43 @@ func saveUserStore(filename string, userStore map[string]UserDetails) error {
 
 	return nil
 }
+func CheckAndCreateFile(filename string) error {
+	// Check if the file exists
+	if _, err := os.Stat(filename); os.IsNotExist(err) {
+		// File does not exist, create it
+		file, err := os.Create(filename)
+		if err != nil {
+			return fmt.Errorf("error creating file: %w", err)
+		}
+		defer file.Close()
 
+		// Write '{}' to the file
+		_, err = file.Write([]byte("{}"))
+		if err != nil {
+			return fmt.Errorf("error writing to file: %w", err)
+		}
+	}
+
+	return nil
+}
 func main() {
 	// Open log file
 	var err error
-	logFile, err = os.OpenFile("user_server.log", os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
+	logFile, err = os.OpenFile("/logs/userinfo.log", os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
 	if err != nil {
 		fmt.Println("Error opening log file:", err)
 		os.Exit(1)
 	}
 	defer logFile.Close()
-
+	CheckAndCreateFile("/app/shared_data/users.json")
+	CheckAndCreateFile("/app/shared_data/authtokens.json")
 	// Set up logger
 	logger = log.New(logFile, "", log.Ldate|log.Ltime|log.Lshortfile)
 
 	http.HandleFunc("/userdetails", UserDetailsHandler)
 	http.HandleFunc("/useradd", UserAddHandler)
 
-	fmt.Println("User server started at http://localhost:8083")
-	logger.Println("User server started at http://localhost:8083")
+	fmt.Println("User server started at http://userinfo:8083")
+	logger.Println("User server started at http://userinfo:8083")
 	log.Fatal(http.ListenAndServe(":8083", nil))
 }

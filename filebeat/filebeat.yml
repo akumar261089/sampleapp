@@ -1,0 +1,30 @@
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - /logs/*.log  # Specify the path to your log files
+
+# Output to Logstash
+output.logstash:
+  hosts: ["192.168.1.9:5044"]  # Logstash host and port
+
+# Optional: Specify logging level
+logging:
+  level: info
+  to_files: true
+  files:
+    path: /var/log/filebeat
+    name: filebeat.log
+    keepfiles: 7
+    permissions: 0644
+
+# Enable modules (optional, depending on your use case)
+filebeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+  reload.enabled: false
+
+# Enable built-in dashboards for Kibana
+setup.kibana:
+  host: "http://192.168.1.9:5601"
+
+setup.dashboards.enabled: true

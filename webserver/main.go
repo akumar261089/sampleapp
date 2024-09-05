@@ -44,9 +44,9 @@ func init() {
 	var err error
 
 	// Open or create the log file
-	logFile, err = os.OpenFile("server.log", os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
+	logFile, err = os.OpenFile("/logs/webserver.log", os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
-		fmt.Printf("Error opening log file: %v\n", err)
+		fmt.Printf("ERROR: Error opening log file: %v\n", err)
 		os.Exit(1)
 	}
 
@@ -61,23 +61,23 @@ func init() {
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("HomeHandler: Fetching product details")
 
-	resp, err := http.Get("http://localhost:8081/products") // Replace with actual API URL
+	resp, err := http.Get("http://productlist:8081/products") // Replace with actual API URL
 	if err != nil {
-		log.Printf("HomeHandler: Error fetching products - %v\n", err)
+		log.Printf("ERROR: HomeHandler: Error fetching products - %v\n", err)
 		http.Error(w, "Unable to fetch products", http.StatusInternalServerError)
 		return
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		log.Printf("HomeHandler: Unexpected status code %d from products API\n", resp.StatusCode)
+		log.Printf("ERROR: HomeHandler: Unexpected status code %d from products API\n", resp.StatusCode)
 		http.Error(w, "Error fetching products", http.StatusInternalServerError)
 		return
 	}
 
 	var products []Product
 	if err := json.NewDecoder(resp.Body).Decode(&products); err != nil {
-		log.Printf("HomeHandler: Error parsing product data - %v\n", err)
+		log.Printf("ERROR: HomeHandler: Error parsing product data - %v\n", err)
 		http.Error(w, "Error parsing product data", http.StatusInternalServerError)
 		return
 	}
@@ -111,9 +111,9 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 		log.Printf("LoginHandler: Attempting to log in user %s\n", username)
 
-		resp, err := http.Post("http://localhost:8082/auth", "application/json", strings.NewReader(string(userJson)))
+		resp, err := http.Post("http://auth:8082/auth", "application/json", strings.NewReader(string(userJson)))
 		if err != nil {
-			log.Printf("LoginHandler: Error sending login request - %v\n", err)
+			log.Printf("ERROR: LoginHandler: Error sending login request - %v\n", err)
 			http.Error(w, "Invalid credentials", http.StatusUnauthorized)
 			return
 		}
@@ -131,7 +131,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 		erro := json.Unmarshal([]byte(string(authKey)), &tokenResponse)
 		if erro != nil {
-			log.Fatal("Error parsing JSON:", erro)
+			log.Fatal("ERROR: Error parsing JSON:", erro)
 		}
 
 		log.Printf("LoginHandler: Successfully authenticated user %s\n", username)
@@ -177,28 +177,28 @@ func UserHomeHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("UserHomeHandler: Fetching details for user %s\n", usernameCookie.Value)
 
-	req, _ := http.NewRequest("GET", "http://localhost:8083/userdetails", nil)
+	req, _ := http.NewRequest("GET", "http://userinfo:8083/userdetails", nil)
 	req.Header.Set("Authorization", cookie.Value)
 	req.Header.Set("username", usernameCookie.Value)
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Printf("UserHomeHandler: Error sending request for user details - %v\n", err)
+		log.Printf("ERROR: UserHomeHandler: Error sending request for user details - %v\n", err)
 		http.Error(w, "Error fetching user details", http.StatusInternalServerError)
 		return
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		log.Printf("UserHomeHandler: Unexpected status code %d while fetching user details\n", resp.StatusCode)
+		log.Printf("ERROR: UserHomeHandler: Unexpected status code %d while fetching user details\n", resp.StatusCode)
 		http.Error(w, "Error fetching user details", http.StatusInternalServerError)
 		return
 	}
 
 	var userDetails UserDetails
 	if err := json.NewDecoder(resp.Body).Decode(&userDetails); err != nil {
-		log.Printf("UserHomeHandler: Error parsing user details - %v\n", err)
+		log.Printf("ERROR: UserHomeHandler: Error parsing user details - %v\n", err)
 		http.Error(w, "Error parsing user data", http.StatusInternalServerError)
 		return
 	}
@@ -237,9 +237,9 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
 
 		// First, send user details to register
 		userJson, _ := json.Marshal(userDetails)
-		resp, err := http.Post("http://localhost:8083/useradd", "application/json", strings.NewReader(string(userJson)))
+		resp, err := http.Post("http://userinfo:8083/useradd", "application/json", strings.NewReader(string(userJson)))
 		if err != nil {
-			log.Printf("SignUpHandler: Error sending signup request - %v\n", err)
+			log.Printf("ERROR: SignUpHandler: Error sending signup request - %v\n", err)
 			http.Error(w, "Error signing up", http.StatusInternalServerError)
 			return
 		}
@@ -251,10 +251,10 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
 		} else if resp.StatusCode == http.StatusConflict {
 			// User already exists
-			log.Printf("SignUpHandler: User already exists - %s\n", username)
+			log.Printf("ERROR: SignUpHandler: User already exists - %s\n", username)
 			http.Error(w, "User already exists", http.StatusConflict)
 		} else {
-			log.Printf("SignUpHandler: Error response while signing up user %s - status code %d\n", username, resp.StatusCode)
+			log.Printf("ERROR: SignUpHandler: Error response while signing up user %s - status code %d\n", username, resp.StatusCode)
 			http.Error(w, "Error signing up", http.StatusInternalServerError)
 		}
 
@@ -274,7 +274,7 @@ func main() {
 	http.HandleFunc("/userhome", UserHomeHandler)
 	http.HandleFunc("/signup", SignUpHandler)
 
-	log.Println("Server started at http://localhost:8080")
+	log.Println("Server started at http://webserver:8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatalf("Server failed to start - %v\n", err)
 	}

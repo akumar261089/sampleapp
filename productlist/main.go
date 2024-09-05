@@ -90,7 +90,7 @@ func ProductDetailsHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	// Open log file
 	var err error
-	logFile, err = os.OpenFile("api_server.log", os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
+	logFile, err = os.OpenFile("/logs/productlist.log", os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
 	if err != nil {
 		fmt.Println("Error opening log file:", err)
 		os.Exit(1)
@@ -103,7 +103,7 @@ func main() {
 	http.HandleFunc("/products", ProductsHandler)
 	http.HandleFunc("/products/", ProductDetailsHandler)
 
-	fmt.Println("API server running on http://localhost:8081")
-	logger.Println("API server running on http://localhost:8081")
+	fmt.Println("API server running on http://productlist:8081")
+	logger.Println("API server running on http://productlist:8081")
 	log.Fatal(http.ListenAndServe(":8081", nil))
 }

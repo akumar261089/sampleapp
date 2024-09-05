@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  auth:
+    image: auth:2
+    container_name: auth_service
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./shared_data:/app/shared_data
+      - ./logs:/logs
+
+  productlist:
+    image: productlist:2
+    container_name: productlist_service
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./logs:/logs
+
+
+  userinfo:
+    image: userinfo:2
+    container_name: userinfo_service
+    ports:
+      - "8083:8083"
+    volumes:
+      - ./shared_data:/app/shared_data
+      - ./logs:/logs
+
+  webserver:
+    image: webserver:2
+    container_name: webserver_service
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./logs:/logs
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.17.13
+    container_name: filebeat
+    user: root
+    volumes:
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./logs:/logs:ro
+    command: filebeat -e -strict.perms=false
+volumes:
+  shared_data:
+  logs: 

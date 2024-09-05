@@ -37,7 +37,7 @@ func AuthHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Load userStore from file for each request
-	userStore, err := LoadUserStore("../userdata/users.json")
+	userStore, err := LoadUserStore("/app/shared_data/users.json")
 	if err != nil {
 		http.Error(w, "Error loading user store", http.StatusInternalServerError)
 		logger.Println("Error loading user store:", err)
@@ -115,7 +115,7 @@ func LoadUserStore(filename string) (map[string]string, error) {
 // UpdateAuthTokens updates the auth tokens file with a new token for the user
 func UpdateAuthTokens(username, authToken string) error {
 	// Load existing auth tokens
-	file, err := os.OpenFile("../userdata/authtokens.json", os.O_RDWR|os.O_CREATE, 0666)
+	file, err := os.OpenFile("/app/shared_data/authtokens.json", os.O_RDWR|os.O_CREATE, 0666)
 	if err != nil {
 		return err
 	}
@@ -143,11 +143,31 @@ func UpdateAuthTokens(username, authToken string) error {
 
 	return nil
 }
+func CheckAndCreateFile(filename string) error {
+	// Check if the file exists
+	if _, err := os.Stat(filename); os.IsNotExist(err) {
+		// File does not exist, create it
+		file, err := os.Create(filename)
+		if err != nil {
+			return fmt.Errorf("error creating file: %w", err)
+		}
+		defer file.Close()
 
+		// Write '{}' to the file
+		_, err = file.Write([]byte("{}"))
+		if err != nil {
+			return fmt.Errorf("error writing to file: %w", err)
+		}
+	}
+
+	return nil
+}
 func main() {
 	// Open log file
 	var err error
-	logFile, err = os.OpenFile("auth_server.log", os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
+	CheckAndCreateFile("/app/shared_data/users.json")
+	CheckAndCreateFile("/app/shared_data/authtokens.json")
+	logFile, err = os.OpenFile("/logs/auth.log", os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
 	if err != nil {
 		fmt.Println("Error opening log file:", err)
 		os.Exit(1)
@@ -159,7 +179,7 @@ func main() {
 
 	http.HandleFunc("/auth", AuthHandler)
 
-	fmt.Println("Authentication server started at http://localhost:8082")
-	logger.Println("Authentication server started at http://localhost:8082")
+	fmt.Println("Authentication server started at http://auth:8082")
+	logger.Println("Authentication server started at http://auth:8082")
 	log.Fatal(http.ListenAndServe(":8082", nil))
 }

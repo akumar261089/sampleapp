@@ -7,7 +7,7 @@ if [ -z "$1" ]; then
 fi
 
 VERSION=$1
-
+go mod init example.com/m
 # Directories for each application
 apps=("auth" "productlist" "userinfo" "webserver")
 
@@ -28,18 +28,6 @@ for app in "${apps[@]}"; do
 
     echo "$app built successfully."
 
-    # Create a Dockerfile for the scratch image
-    cat <<EOF > Dockerfile
-# Use scratch image
-FROM scratch
-
-# Add application binary to the container
-COPY $app /$app
-
-# Run the application
-ENTRYPOINT ["/$app"]
-EOF
-
     # Build the Docker image
     docker build -t "${app}:${VERSION}" .
 
@@ -54,11 +42,6 @@ EOF
     cd - > /dev/null
 done
 
-# Version control - tagging the build
-echo "Tagging the build with version $VERSION"
-git add .
-git commit -m "Build version $VERSION"
-git tag "v$VERSION"
-git push origin --tags
+
 
 echo "Build, Docker image creation, and versioning completed successfully."
