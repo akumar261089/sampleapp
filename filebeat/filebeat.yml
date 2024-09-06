@@ -27,4 +27,4 @@ filebeat.config.modules:
 setup.kibana:
   host: "http://192.168.1.9:5601"
 
-setup.dashboards.enabled: true
+setup.dashboards.enabled: false
