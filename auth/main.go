@@ -27,7 +27,20 @@ var (
 	logger *log.Logger
 	logFile *os.File
 )
+func HealthHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Only GET method is allowed", http.StatusMethodNotAllowed)
+		logger.Println("Invalid request method:", r.Method)
+		return
+	}
 
+	// Health check response
+	response := map[string]string{"status": "ok"}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+	logger.Println("Health check requested.")
+}
 // AuthHandler handles authentication requests
 func AuthHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
@@ -178,6 +191,8 @@ func main() {
 	logger = log.New(logFile, "", log.Ldate|log.Ltime|log.Lshortfile)
 
 	http.HandleFunc("/auth", AuthHandler)
+	http.HandleFunc("/health", HealthHandler)
+
 
 	fmt.Println("Authentication server started at http://auth:8082")
 	logger.Println("Authentication server started at http://auth:8082")

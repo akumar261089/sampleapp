@@ -9,7 +9,7 @@ fi
 VERSION=$1
 go mod init example.com/m
 # Directories for each application
-apps=("auth" "productlist" "userinfo" "webserver")
+apps=("auth" "productlist" "userinfo" "webserver" "filebeatlike")
 
 # Iterate over each application and build them
 for app in "${apps[@]}"; do

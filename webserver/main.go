@@ -56,7 +56,20 @@ func init() {
 
 	tmpl = template.Must(template.ParseGlob("templates/*"))
 }
+func HealthHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Only GET method is allowed", http.StatusMethodNotAllowed)
+		log.Println("Invalid request method:", r.Method)
+		return
+	}
 
+	// Health check response
+	response := map[string]string{"status": "ok"}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+	log.Println("Health check requested.")
+}
 // HomeHandler serves the home page with product details
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("HomeHandler: Fetching product details")

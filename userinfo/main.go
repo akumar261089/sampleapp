@@ -23,7 +23,20 @@ var (
 	logger *log.Logger
 	logFile *os.File
 )
+func HealthHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Only GET method is allowed", http.StatusMethodNotAllowed)
+		logger.Println("Invalid request method:", r.Method)
+		return
+	}
 
+	// Health check response
+	response := map[string]string{"status": "ok"}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+	logger.Println("Health check requested.")
+}
 // UserDetailsHandler handles GET requests for user details
 func UserDetailsHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
@@ -209,7 +222,7 @@ func main() {
 	CheckAndCreateFile("/app/shared_data/authtokens.json")
 	// Set up logger
 	logger = log.New(logFile, "", log.Ldate|log.Ltime|log.Lshortfile)
-
+	http.HandleFunc("/health", HealthHandler)
 	http.HandleFunc("/userdetails", UserDetailsHandler)
 	http.HandleFunc("/useradd", UserAddHandler)
 

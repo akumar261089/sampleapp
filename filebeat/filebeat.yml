@@ -6,7 +6,7 @@ filebeat.inputs:
 
 # Output to Logstash
 output.logstash:
-  hosts: ["192.168.1.9:5044"]  # Logstash host and port
+  hosts: ["192.168.1.7:5044"]  # Logstash host and port
 
 # Optional: Specify logging level
 logging:
@@ -25,6 +25,6 @@ filebeat.config.modules:
 
 # Enable built-in dashboards for Kibana
 setup.kibana:
-  host: "http://192.168.1.9:5601"
+  host: "http://192.168.1.7:5601"
 
-setup.dashboards.enabled: true
+setup.dashboards.enabled: false

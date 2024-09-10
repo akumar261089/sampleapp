@@ -1,0 +1,47 @@
+{
+    "keywords": {
+        "auth": {
+            "logfile": "/logs/auth.log",
+            "healthcheck": "curl -s  http://localhost:8082/health",
+            "SuccessLog": "Authentication server started at http://localhost:8082",
+            "Actions": [
+                {"action": "docker-compose -f ../docker-compose-v2-fb.yml restart auth", "result": "auth service restarted"},
+                {"action": "docker-compose -f ../docker-compose-v2-fb.yml up", "result": "V2 stack redeployed"},
+                {"action": "docker-compose -f ../docker-compose-v1-fb.yml up", "result": "Roll back to v1"}
+               
+            ]
+        },
+        "userinfo": {
+            "logfile": "/logs/userinfo.log",
+            "healthcheck": "curl -s  http://localhost:8083/health",
+            "SuccessLog": "User information retrieved successfully",
+            "Actions": [
+                {"action": "docker-compose -f ../docker-compose-v2-fb.yml restart userinfo", "result": "userinfo service restarted"},
+                {"action": "docker-compose -f ../docker-compose-v2-fb.yml up", "result": "V2 stack redeployed"},
+                {"action": "docker-compose -f ../docker-compose-v1-fb.yml up", "result": "Roll back to v1"}
+            ]
+        },
+        "productlist": {
+            "logfile": "/logs/productlist.log",
+            "healthcheck": "curl -s  http://localhost:8081/health",
+            "RestartLog": "Product list service restarted",
+            "SuccessLog": "Products list served",
+            "Validate": "Checking products cache",
+            "Actions": [
+                {"action": "docker-compose -f ../docker-compose-v2-fb.yml restart productlist", "result": "Product list service restarted"},
+                {"action": "docker-compose -f ../docker-compose-v2-fb.yml up", "result": "V2 stack redeployed"},
+                {"action": "docker-compose -f ../docker-compose-v1-fb.yml up", "result": "Roll back to v1"}
+            ]
+        },
+        "webserver": {
+            "logfile": "/logs/webserver.log",
+            "healthcheck": "curl -s  http://localhost:8080/health",
+            "SuccessLog": "Webserver is up and running",
+            "Actions": [
+                {"action": "docker-compose -f ../docker-compose-v2-fb.yml restart webserver", "result": "webserver service restarted"},
+                {"action": "docker-compose -f ../docker-compose-v2-fb.yml up", "result": "V2 stack redeployed"},
+                {"action": "docker-compose -f ../docker-compose-v1-fb.yml up", "result": "Roll back to v1"}
+            ]
+        }
+    }
+}

@@ -31,7 +31,20 @@ var (
 	logger *log.Logger
 	logFile *os.File
 )
+func HealthHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Only GET method is allowed", http.StatusMethodNotAllowed)
+		logger.Println("Invalid request method:", r.Method)
+		return
+	}
 
+	// Health check response
+	response := map[string]string{"status": "ok"}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+	logger.Println("Health check requested.")
+}
 // ProductsHandler handles requests to /products and responds with a list of all products
 func ProductsHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
@@ -99,7 +112,7 @@ func main() {
 
 	// Set up logger
 	logger = log.New(logFile, "", log.Ldate|log.Ltime|log.Lshortfile)
-
+	http.HandleFunc("/health", HealthHandler)
 	http.HandleFunc("/products", ProductsHandler)
 	http.HandleFunc("/products/", ProductDetailsHandler)
 
